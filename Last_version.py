@@ -87,7 +87,6 @@ with sq.connect("gosti.db") as base2:
                         name TEXT,
                         otch TEXT,
                         date TEXT,
-                        cel TEXT,
                         nomer TEXT,
                         pochta TEXT,
                         time_ek INT ,
@@ -98,6 +97,7 @@ with sq.connect("gosti.db") as base2:
 class PassControlApp(QWidget):
     def __init__(self):
         super().__init__()
+        self.setFixedSize(600,500)
         global m_data
         global base
         global personal
@@ -105,9 +105,9 @@ class PassControlApp(QWidget):
         self.m_data = 0
         self.car = 0
         self.RadioButton = QRadioButton("Есть машина?")
-        self.issue_pass_button2 = QPushButton('Гостевой пропуск')
-        self.issue_pass_button = QPushButton('Вошёл')
         self.issue_pass_button3 = QPushButton('Вышел')
+        self.issue_pass_button = QPushButton('Зашёл')
+        self.issue_pass_button2 = QPushButton('Гостевой пропуск')
         self.issue_pass_button.clicked.connect(self.eks)
         self.issue_pass_button3.clicked.connect(self.exit)
         self.issue_pass_button2.clicked.connect(self.time_c)
@@ -122,7 +122,7 @@ class PassControlApp(QWidget):
         layout.addWidget(self.issue_pass_button)
         layout.addWidget(self.issue_pass_button3)
         self.setLayout(layout)
-        self.setWindowTitle('КПП')
+        self.setWindowTitle('Терминал Охранника')
     def time_c(self):
         pass1.show()
     def eks(self):
@@ -186,6 +186,7 @@ class PassControlApp(QWidget):
 class App(QWidget):
     def __init__(self):
         super().__init__()
+        self.setFixedSize(500,400)
         self.car = 0
         global s_data
         global base2
@@ -202,7 +203,6 @@ class App(QWidget):
         self.name = QLineEdit(self, placeholderText="Ведите имя...")
         self.otch = QLineEdit(self, placeholderText="Ведите отчество...")
         self.date = QLineEdit(self, placeholderText="Ведите дату рождения...")
-        self.cel = QLineEdit(self, placeholderText="Ведите цель визита...")
         self.nomer = QLineEdit(self, placeholderText="Ведите номер телефона...")
         self.pochta = QLineEdit(self, placeholderText="Ведите контактную почту...")
         layout = QVBoxLayout()
@@ -210,7 +210,6 @@ class App(QWidget):
         layout.addWidget(self.name)
         layout.addWidget(self.otch)
         layout.addWidget(self.date)
-        layout.addWidget(self.cel)
         layout.addWidget(self.nomer)
         layout.addWidget(self.pochta)
         layout.addWidget(self.RadioButton)
@@ -240,10 +239,9 @@ class App(QWidget):
                 self.namet = self.name.text()
                 self.otcht = self.otch.text()
                 self.datet = self.date.text()
-                self.celt = self.cel.text()
                 self.nomert = self.nomer.text()
                 self.pochtat = self.pochta.text()
-                self.CORT = [(self.familt, self.namet, self.otcht, self.datet, self.celt, self.nomert, self.pochtat,
+                self.CORT = [(self.familt, self.namet, self.otcht, self.datet,self.nomert, self.pochtat,
                               self.time, 0)]
                 s_data.execute('SELECT pochta FROM gosti')
                 self.rows = s_data.fetchall()
@@ -259,11 +257,10 @@ class App(QWidget):
             self.namet = self.name.text()
             self.otcht = self.otch.text()
             self.datet = self.date.text()
-            self.celt = self.cel.text()
             self.nomert = self.nomer.text()
             self.pochtat = self.pochta.text()
             self.CORT = [
-                (self.familt, self.namet, self.otcht, self.datet, self.celt, self.nomert, self.pochtat, self.time, 0)]
+                (self.familt, self.namet, self.otcht, self.datet, self.nomert, self.pochtat, self.time, 0)]
             s_data.execute('SELECT pochta FROM gosti')
             self.rows = s_data.fetchall()
             if self.rows.count((self.pochta.text(),)):
