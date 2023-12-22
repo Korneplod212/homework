@@ -109,7 +109,7 @@ class PassControlApp(QWidget):
         self.issue_pass_button = QPushButton('Зашёл')
         self.issue_pass_button2 = QPushButton('Гостевой пропуск')
         self.issue_pass_button.clicked.connect(self.eks)
-        self.issue_pass_button3.clicked.connect(self.exit)
+        self.issue_pass_button3.clicked.connect(self.ex)
         self.issue_pass_button2.clicked.connect(self.time_c)
         self.RadioButton.toggled.connect(self.parking)
         self.name = QLineEdit(self, placeholderText="почта сотрудника...")
@@ -157,7 +157,7 @@ class PassControlApp(QWidget):
                 print("сотрудник", self.poch, "Вошёл !")
             else:
                 print("в базе данных нет этой почты")
-    def exit(self):
+    def ex(self):
         global ghosti
         global personal
         self.poch = self.name.text()
@@ -198,7 +198,7 @@ class App(QWidget):
         self.issue_pass_button.clicked.connect(self.Goshti)
         self.issue_pass_button2.clicked.connect(self.time_c)
         self.RadioButton.toggled.connect(self.parking)
-        self.exit = QLineEdit(self, placeholderText="Ведите контактную почту для выхода...")
+        self.ex = QLineEdit(self, placeholderText="Ведите контактную почту для выхода...")
         self.famil = QLineEdit(self, placeholderText="Ведите фамилию ...")
         self.name = QLineEdit(self, placeholderText="Ведите имя...")
         self.otch = QLineEdit(self, placeholderText="Ведите отчество...")
@@ -214,7 +214,7 @@ class App(QWidget):
         layout.addWidget(self.pochta)
         layout.addWidget(self.RadioButton)
         layout.addWidget(self.issue_pass_button)
-        layout.addWidget(self.exit)
+        layout.addWidget(self.ex)
         layout.addWidget(self.issue_pass_button2)
         self.setLayout(layout)
         self.setWindowTitle('Пропускной пункт для гостей')
@@ -279,13 +279,13 @@ class App(QWidget):
         if self.car == 1:
             personal += 1
             ghosti += 1
-        self.exi = self.exit.text()
+        self.exi = self.ex.text()
         self.time = time.time()
         self.local_time = time.ctime(time.time())
         s_data.execute(f"""UPDATE gosti SET time_ex = ? where pochta=? """, [self.time, self.exi])
         s_data.execute('SELECT pochta FROM gosti')
         self.rows = s_data.fetchall()
-        if self.rows.count((self.exit.text(),)):
+        if self.rows.count((self.ex.text(),)):
             print("Гость", self.exi, "Вышел")
             s_data.execute('SELECT time_ek,time_ex FROM gosti WHERE pochta=?', (self.pochtat,))
             self.rows2 = s_data.fetchall()
