@@ -2,8 +2,6 @@ import sys
 import sqlite3 as sq
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QLineEdit, QRadioButton
 import time
-pers = 20
-gosti = 5
 base1 = [("Алексеев", "Илья", "Алексеевич", "23-Apr-1994", "директор по информатизации", "+79993456785",
           "aleksee45@mail.ru", "NULL", "NULL"),
          ("Аржанов", "Владислав", "Александрович", "27-Jan-1995", "начальние отдела кадров", "+79063194556",
@@ -61,6 +59,8 @@ base1 = [("Алексеев", "Илья", "Алексеевич", "23-Apr-1994",
           "NULL"),
          ("Шушняев", "Никита", "Максимовна", "09-Sep-1991", "сметчик", "+79031732861", "Shushnyaev@gmail.com", "NULL",
           "NULL")]
+pers = 20
+gosti = 5
 local = time.ctime(time.time())
 with sq.connect("base.db") as base:
     cur = base.cursor()
