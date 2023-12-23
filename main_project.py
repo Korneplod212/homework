@@ -2,7 +2,7 @@ import sys
 import sqlite3 as sq
 from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QLineEdit, QRadioButton
 import time
-sotryd = 20
+pers = 20
 gosti = 5
 base1 = [("Алексеев", "Илья", "Алексеевич", "23-Apr-1994", "директор по информатизации", "+79993456785",
           "aleksee45@mail.ru", "NULL", "NULL"),
@@ -100,7 +100,7 @@ class PassControlApp(QWidget):
         super().__init__()
         global cur
         global base
-        global sotryd
+        global pers
         global gosti
         self.cur = 0
         self.car = 0
@@ -127,17 +127,17 @@ class PassControlApp(QWidget):
         pass1.show()
     def eks(self):
         global gosti
-        global sotryd
+        global pers
         self.dog = self.name.text().find("@")
         self.poch = self.name.text()
         self.local_time = time.ctime(time.time())
         if self.car == 1:
-            if sotryd != 0:
-                if sotryd < 5 and gosti > 0:
-                    sotryd = sotryd - 1
-                    gosti = gosti - 1
+            if pers != 0:
+                if pers < 5 and gosti > 0:
+                    pers -= 1
+                    gosti -= 1
                 else:
-                    sotryd = sotryd - 1
+                    pers -= 1
                 cur.execute(f"""UPDATE rabotniki SET time_ek = ? where pochta=?""", [self.local_time, self.poch])
 
                 cur.execute('SELECT pochta FROM rabotniki')
@@ -160,13 +160,13 @@ class PassControlApp(QWidget):
                 print("Такой почты нет в базе данных")
     def exit(self):
         global gosti
-        global sotryd
+        global pers
         self.poch = self.name.text()
         if self.car == 1:
-            if sotryd < 5 and gosti < 5:
-                sotryd = sotryd + 1
-                gosti = gosti + 1
-            sotryd = sotryd + 1
+            if pers < 5 and gosti < 5:
+                pers += 1
+                gosti += 1
+            pers += 1
         self.local_time = time.ctime(time.time())
         cur.execute(f"""UPDATE rabotniki SET time_ex = ? where pochta=? AND time_ek!='NULL' """,
                     [self.local_time, self.poch])
@@ -190,7 +190,7 @@ class App(QWidget):
         self.car = 0
         global cur2
         global base2
-        global sotryd
+        global pers
         global gosti
         self.pass_label = QLabel('Пропускные документы: 0')
         self.issue_pass_button2 = QPushButton('Выдать пропуск на выход')
@@ -231,10 +231,10 @@ class App(QWidget):
             print("Порковочных мест нет приходите позже!!!")
     def vremPROP(self):
         global gosti
-        global sotryd
+        global pers
         if self.car == 1:
-            sotryd = sotryd + 1
-            gosti = gosti + 1
+            pers += 1
+            gosti += 1
         self.exi = self.exit.text()
         self.time = time.time()
         self.local_time = time.ctime(time.time())
@@ -256,13 +256,13 @@ class App(QWidget):
             print("Такой почты нет в базе данных")
     def issue_pass(self):
         global gosti
-        global sotryd
+        global pers
         if self.car == 1:
             if gosti == 0:
                 print("Парковочных мест нет приходите позже!!!")
             else:
-                sotryd = sotryd - 1
-                gosti = gosti - 1
+                pers -= 1
+                gosti -= 1
                 self.time = time.time()
                 self.familt = self.famil.text()
                 self.namet = self.name.text()
