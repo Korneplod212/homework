@@ -1,6 +1,6 @@
 import sys
 import sqlite3 as sq
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QLineEdit, QRadioButton
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QLineEdit, QRadioButton, QHBoxLayout
 import time
 base1 = [("Алексеев", "Илья", "Алексеевич", "23-Apr-1994", "директор по информатизации", "+79993456785",
           "aleksee45@mail.ru", "NULL", "NULL"),
@@ -95,6 +95,8 @@ with sq.connect("gosti.db") as base2:
                         );
                         """)
     base2.commit()
+
+
 class PassControlApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -104,25 +106,74 @@ class PassControlApp(QWidget):
         global gosti
         self.cur = 0
         self.car = 0
-        self.RadioButton = QRadioButton("Есть ли машина?")
-        self.issue_pass_button2 = QPushButton('Добавить временный пропуск')
+        self.RadioButton = QRadioButton("Нужно ли парковочное место?")
         self.issue_pass_button = QPushButton('Вошёл')
         self.issue_pass_button3 = QPushButton('Вышел')
+        self.issue_pass_button2 = QPushButton('Добавить гостевой пропуск')
         self.issue_pass_button.clicked.connect(self.eks)
         self.issue_pass_button3.clicked.connect(self.exit)
         self.issue_pass_button2.clicked.connect(self.vremPROP)
         self.RadioButton.toggled.connect(self.update)
-        self.name = QLineEdit(self, placeholderText="Ведите почту сотрудника...")
-        self.passv = QLineEdit(self, placeholderText="Ведите имя...")
-        layout = QVBoxLayout()
+        self.name = QLineEdit(self, placeholderText="почта сотрудника")
+        self.passv = QLineEdit(self, placeholderText="имя")
+
+        layout = QVBoxLayout()  # Используем QVBoxLayout для главного контейнера
+        h_layout = QHBoxLayout()  # Используем QHBoxLayout для кнопок
+
+        h_layout.addWidget(self.issue_pass_button)  # Добавляем кнопку в горизонтальный макет
+        h_layout.addWidget(self.issue_pass_button3)  # Добавляем кнопку в горизонтальный макет
+        h_layout.addWidget(self.issue_pass_button2)  # Добавляем кнопку в горизонтальный макет
+
         layout.addWidget(self.name)
         layout.addWidget(self.passv)
         layout.addWidget(self.RadioButton)
-        layout.addWidget(self.issue_pass_button2)
-        layout.addWidget(self.issue_pass_button)
-        layout.addWidget(self.issue_pass_button3)
+        layout.addLayout(h_layout)  # Добавляем горизонтальный макет в вертикальный макет
+
         self.setLayout(layout)
         self.setWindowTitle('Пропускной пункт')
+        self.setGeometry(100, 100, 400, 200)
+
+        # Устанавливаем стили кнопок
+        self.issue_pass_button.setStyleSheet("background-color: #4CAF50; color: white; font-size: 20px")
+        self.issue_pass_button2.setStyleSheet("background-color: #008CBA; color: white; font-size: 20px")
+        self.issue_pass_button3.setStyleSheet("background-color: #f44336; color: white; font-size: 20px")
+        self.RadioButton.setStyleSheet("font-size: 16px")
+
+    def issue_pass(self):
+        global gosti
+        global pers
+        if self.car == 1:
+            if gosti == 0 or pers == 0:  # Проверка свободных мест
+                print("Парковочных мест нет приходите позже!!!")
+            else:
+                pers -= 1
+                gosti -= 1
+                # (остальная часть метода issue_pass)
+
+        else:
+            self.time = time.time()
+            self.familt = self.famil.text()
+            self.namet = self.name.text()
+            self.otcht = self.otch.text()
+            self.datet = self.date.text()
+            self.celt = self.cel.text()
+            self.nomert = self.nomer.text()
+            self.pochtat = self.pochta.text()
+            self.CORT = [
+                (self.familt, self.namet, self.otcht, self.datet, self.celt, self.nomert, self.pochtat, self.time, 0)]
+            cur2.execute('SELECT pochta FROM gosti')
+            self.rows = cur2.fetchall()
+            if self.rows.count((self.pochta.text(),)):
+                print("Такая почта уже есть")
+            else:
+                print("Гость", self.pochtat, "Вошёл")
+
+                cur2.executemany("INSERT INTO gosti VALUES(?, ? , ?, ?, ? , ?, ? , ?,?)", self.CORT)
+                base2.commit()
+            cur2.execute('SELECT time_ek,time_ex FROM gosti WHERE pochta=?', self.pochtat)
+            self.rows2 = cur2.fetchall()
+            self.tkk = self.rows2[0]
+            self.tk = self.tkk
     def vremPROP(self):
         pass1.show()
     def eks(self):
@@ -222,6 +273,9 @@ class App(QWidget):
         layout.addWidget(self.issue_pass_button2)
         self.setLayout(layout)
         self.setWindowTitle('Пропускной пункт для гостей')
+
+        self.issue_pass_button.setStyleSheet("background-color: #4CAF50; color: white; font-size: 16px")
+        self.issue_pass_button2.setStyleSheet("background-color: #008CBA; color: white; font-size: 16px")
     def update(self):
         if self.car == 0:
             self.car = 1
@@ -305,6 +359,7 @@ class App(QWidget):
             self.rows2 = cur2.fetchall()
             self.tkk = self.rows2[0]
             self.tk = self.tkk
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     pass_control = PassControlApp()
